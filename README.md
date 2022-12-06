@@ -2,4 +2,4 @@
 
 Run it with
 
-    flask --app web --debug run
+    flask --app ecommerce.web --debug run
