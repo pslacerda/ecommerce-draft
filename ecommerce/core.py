@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
-from typing import List, Tuple, Optional, Dict
 from datetime import datetime, timedelta
-from flask import Flask, request, jsonify
+from typing import Dict, Optional, Tuple
 from uuid import uuid4
 
 
@@ -53,11 +52,11 @@ class Cart(UuidMixin):
     @property
     def is_valid(self):
         return datetime.now() - self.last_added <= CART_VALIDATE
-    
+
     @property
     def has_checkout_info(self):
         return (
-                self.personal_info is not None
+            self.personal_info is not None
             and self.payment_info is not None
             and self.shipping_info is not None
         )
@@ -70,7 +69,7 @@ class Cart(UuidMixin):
         self.last_added = datetime.now()
         self.items[item.uuid] = item
         return item.uuid
-    
+
     def del_item(self, item_uuid: str) -> None:
         del self.items[item_uuid]
 
@@ -78,16 +77,21 @@ class Cart(UuidMixin):
         if not self.has_checkout_info or len(self.items) == 0:
             raise IncompleteInfo
         if not self.is_valid:
-            raise ExpiredCart 
+            raise ExpiredCart
         try:
             billing_server = lambda pe, pa, s, tp: None
-            billing_server(self.personal_info, self.payment_info,
-                            self.shipping_info, self.total_price)
+            billing_server(
+                self.personal_info,
+                self.payment_info,
+                self.shipping_info,
+                self.total_price,
+            )
         except Exception as exc:
             return False, str(exc)
         return True, None
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     c = Cart()
     assert c.total_price == 0
     assert c.uuid is not None
