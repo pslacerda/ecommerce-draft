@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from typing import Dict, Optional, Tuple
 from uuid import uuid4
 
-
 MAX_CART_ENTRIES = 1000
 CART_VALIDATE = timedelta(minutes=100)
 
@@ -47,7 +46,7 @@ class Cart(UuidMixin):
 
     @property
     def total_price(self):
-        return sum(i.price * i.quantity for i in self.items)
+        return sum(i.price * i.quantity for i in self.items.values())
 
     @property
     def is_valid(self):
@@ -79,31 +78,7 @@ class Cart(UuidMixin):
         if not self.is_valid:
             raise ExpiredCart
         try:
-            billing_server = lambda pe, pa, s, tp: None
-            billing_server(
-                self.personal_info,
-                self.payment_info,
-                self.shipping_info,
-                self.total_price,
-            )
-        except Exception as exc:
+            pass  # TODO
+        except Exception as exc:  # pylint: disable=broad-except
             return False, str(exc)
         return True, None
-
-
-if __name__ == "__main__":
-    c = Cart()
-    assert c.total_price == 0
-    assert c.uuid is not None
-
-    c.add_item(CartItem("Produto 1", 5.0, 2))
-    c.add_item(CartItem("Produto 2", 10.0, 1))
-    assert c.total_price == 20.0
-    assert c.is_valid
-    assert not c.has_checkout_info
-
-    c.personal_info = "Person Name"
-    c.payment_info = "Credit Card Number"
-    c.shipping_info = "Address"
-    assert c.has_checkout_info
-    assert c.transact_payment() == (True, None)
