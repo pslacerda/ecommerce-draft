@@ -18,7 +18,7 @@ Run it with:
     flask --app ecommerce.web --debug run
 
 
-Before you commit, run quality check tools:
+Before you commit, run quality tools:
 
     black .
     isort .
