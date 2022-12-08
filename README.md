@@ -11,7 +11,7 @@ Instructions for Windows:
 
 After activation you can install project requirements:
 
-    pip install -r ./requirements.txt
+    pip install -r ./requirements.txt -r ./requirements-dev.txt
 
 Run it with:
 
@@ -23,3 +23,8 @@ Before you commit, run quality tools:
     black .
     isort .
     pylint ecommerce
+
+
+Test the code with:
+
+    pytest
